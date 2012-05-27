@@ -28,8 +28,7 @@ Or install it yourself as:
     p BimyouSegmenter.segment("watashi ha tori desu.\n")
     p BimyouSegmenter.segment("watashi ha tori desu.\n", :white_space => true)
 
-segmentは、分かち書きした結果を文字列の配列として返します。この結果には空白文字や改行コードを含まれません。
-:white_space => trueを付けると空白文字や改行コードも返します。このオプションをtrueに指定した場合は、返した文字列配列を順に結合すると元の文字列と一致します。
+segmentは、分かち書きした結果を文字列の配列として返します。この結果は空白文字や改行コードを含みません。
+:white_space => trueを付けると空白文字や改行コードも含みます。この場合は、返した文字列配列を順に結合すると元の文字列と一致します。
 
 Ruby1.8.7の場合、$KCODE='u'にしないと動きません。
-

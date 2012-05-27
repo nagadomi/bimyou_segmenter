@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+if (RUBY_VERSION < "1.9.0")
+  require 'rubygems'
+  $KCODE= 'u'
+end
+require 'bimyou_segmenter'
+require 'optparse'
+
+white_space = false
+delimiter = "\n"
+eos = "EOS"
+
+opt = OptionParser.new do |opt|
+  opt.on('-s', '--white-space', 'do not ignore whitespace') do |v|
+    white_space = true
+  end
+  opt.on('-d STR', '--delimiter STR', 'word delimiter') do |v|
+    delimiter = v
+  end
+  opt.on('-e STR', '--eos STR', 'EOS string') do |v|
+    eos = v
+  end
+end
+opt.parse!(ARGV)
+delimiter = delimiter.gsub("\\n", "\n").gsub("\\r","\r").gsub("\\t", "\t")
+
+until $stdin.eof?
+  line = $stdin.readline
+  if (line)
+    line = line.chomp
+    begin
+      puts [BimyouSegmenter.segment(line, :white_space => white_space), eos
+           ].flatten.reject{|v| v.size == 0}.join(delimiter)
+    rescue Errno::EPIPE
+      exit 0
+    end
+  end
+end

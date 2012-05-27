@@ -22,18 +22,32 @@ opt = OptionParser.new do |opt|
     eos = v
   end
 end
+opt.version = BimyouSegmenter::VERSION
+opt.banner = "Usage: bimyou_segmenter [options] [files]"
 opt.parse!(ARGV)
 delimiter = delimiter.gsub("\\n", "\n").gsub("\\r","\r").gsub("\\t", "\t")
 
-until $stdin.eof?
-  line = $stdin.readline
-  if (line)
-    line = line.chomp
-    begin
-      puts [BimyouSegmenter.segment(line, :white_space => white_space), eos
-           ].flatten.reject{|v| v.size == 0}.join(delimiter)
-    rescue Errno::EPIPE
-      exit 0
+if (ARGV.size == 0)
+  until $stdin.eof?
+    line = $stdin.readline
+    if (line)
+      line = line.chomp
+      begin
+        puts [BimyouSegmenter.segment(line, :white_space => white_space), eos
+             ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
+      rescue Errno::EPIPE
+        exit 0
+      end
+    end
+  end
+else
+  ARGV.each do |file|
+    File.open(file) do |f|
+      until f.eof?
+        line = f.readline
+        puts [BimyouSegmenter.segment(line, :white_space => white_space), eos
+             ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
+      end
     end
   end
 end

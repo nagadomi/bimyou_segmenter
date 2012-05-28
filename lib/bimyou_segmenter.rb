@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'bimyou_segmenter/version'
 require 'bimyou_segmenter/aozora_model'
 

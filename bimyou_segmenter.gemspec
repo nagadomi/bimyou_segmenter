@@ -4,8 +4,8 @@ require File.expand_path('../lib/bimyou_segmenter/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["nagadomi"]
   gem.email         = ["nagadomi@nurs.or.jp"]
-  gem.description   = %q{Japanese word segmenter.}
-  gem.summary       = %q{Japanese word segmenter.}
+  gem.description   = %q{Japanese Word Segmenter}
+  gem.summary       = %q{Japanese Word Segmenter}
   gem.homepage      = "http://github.com/nagadomi/bimyou_segmenter"
   
   gem.files         = `git ls-files`.split($\)

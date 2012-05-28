@@ -3,7 +3,16 @@
 if (RUBY_VERSION < "1.9.0")
   require 'rubygems'
   $KCODE= 'u'
+  # jruby not work...
+  if (RUBY_PLATFORM.downcase =~ /mswin(?!ce)|mingw|cygwin|bccwin/)
+    nkf_option = '-s'
+  else
+    nkf_option = '-w'
+  end
+else
+  nkf_option = nil
 end
+require 'nkf'
 require 'bimyou_segmenter'
 require 'optparse'
 
@@ -21,6 +30,27 @@ opt = OptionParser.new do |opt|
   opt.on('-e STR', '--eos STR', 'EOS string') do |v|
     eos = v
   end
+  opt.on('-c ENCODING', '--output-encoding ENCODING', 'output encoding (euc-jp, sjis, utf-8)') do |v|
+    encoding = nil
+    option = nil
+    case v.downcase
+    when /(sjis)|(shift_jis)/
+      encoding = 'Shift_JIS'
+      option = '-s'
+    when /utf\-?8/
+      encoding = 'UTF-8'
+      option = '-w'
+    when /euc/
+      encoding = 'EUC-JP'
+      option = '-e'
+    end
+    if (encoding && $stdout.respond_to?(:set_encoding))
+      $stdout.set_encoding(encoding, 'UTF-8')
+      nkf_option = nil
+    else
+      nkf_option = option
+    end
+  end
 end
 opt.version = BimyouSegmenter::VERSION
 opt.banner = "Usage: bimyou_segmenter [options] [files]"
@@ -31,10 +61,14 @@ if (ARGV.size == 0)
   until $stdin.eof?
     line = $stdin.readline
     if (line)
-      line = line.chomp
+      line = NKF.nkf('-w', line).chomp
+      s = [BimyouSegmenter.segment(line, :white_space => white_space), eos
+          ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
+      if (nkf_option)
+        s = NKF.nkf(nkf_option, s)
+      end
       begin
-        puts [BimyouSegmenter.segment(line, :white_space => white_space), eos
-             ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
+        puts s
       rescue Errno::EPIPE
         exit 0
       end
@@ -44,9 +78,13 @@ else
   ARGV.each do |file|
     File.open(file) do |f|
       until f.eof?
-        line = f.readline
-        puts [BimyouSegmenter.segment(line, :white_space => white_space), eos
-             ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
+        line = Nkf.nkf('-w', f.readline)
+        s = [BimyouSegmenter.segment(line, :white_space => white_space), eos
+            ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
+        if (nkf_option)
+          s = NKF.nkf(nkf_option, s)
+        end
+        puts s
       end
     end
   end

@@ -1,0 +1,5 @@
+2012-05-28 nagadomi <nagadomi@nurs.or.jp>
+	* bin/bimyou_segmenter: 文字コード変換に対応 (1.1.0)
+
+2012-05-27 nagadomi <nagadomi@nurs.or.jp>
+	* release

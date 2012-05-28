@@ -78,7 +78,7 @@ else
   ARGV.each do |file|
     File.open(file) do |f|
       until f.eof?
-        line = Nkf.nkf('-w', f.readline)
+        line = NKF.nkf('-w', f.readline)
         s = [BimyouSegmenter.segment(line, :white_space => white_space), eos
             ].flatten(1).reject{|v| v.size == 0}.join(delimiter)
         if (nkf_option)

@@ -68,7 +68,9 @@ if (ARGV.size == 0)
         s = NKF.nkf(nkf_option, s)
       end
       begin
-        puts s
+        unless (s.empty?)
+          puts s
+        end
       rescue Errno::EPIPE
         exit 0
       end
@@ -84,7 +86,9 @@ else
         if (nkf_option)
           s = NKF.nkf(nkf_option, s)
         end
-        puts s
+        unless (s.empty?)
+          puts s
+        end
       end
     end
   end

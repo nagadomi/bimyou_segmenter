@@ -33,6 +33,18 @@ class BimyouSegmenterTest < Test::Unit::TestCase
     assert_equal tokens[2], "\r"
     assert_equal tokens[3], "\n"
     assert_equal tokens[4], "　"
+
+    tokens = BimyouSegmenter.segment("「私はトマトです。」", :symbol => false)
+    assert_equal tokens.size, 4
+    assert_equal tokens[0], "私"
+    assert_equal tokens[1], "は"
+    assert_equal tokens[2], "トマト"
+    assert_equal tokens[3], "です"
+    
+    tokens = BimyouSegmenter.segment("hello. world? = !", :symbol => false)
+    assert_equal tokens.size, 2
+    assert_equal tokens[0], "hello"
+    assert_equal tokens[1], "world"
     
     assert_equal BimyouSegmenter.segment("").size, 0
     assert_equal BimyouSegmenter.segment(nil).size, 0

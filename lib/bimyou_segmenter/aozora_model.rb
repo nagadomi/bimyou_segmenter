@@ -16,6 +16,7 @@ module BimyouSegmenter
       end
       
       white_space = options[:white_space].nil? ? false : options[:white_space]
+      symbol = options[:symbol].nil? ? true : options[:symbol]
       
       wakachi = []
       text_chars = text.chars.to_a
@@ -155,17 +156,23 @@ module BimyouSegmenter
         end
       end
       wakachi << word
-      if (white_space)
-        wakachi
-      else
-        wakachi.reject{|v| v.match(WHITE_SPACE) }
+      unless (white_space)
+        wakachi = wakachi.reject{|v| v.match(WHITE_SPACE) }
       end
+      unless (symbol)
+        wakachi = wakachi.reject{|v| v.match(SYMBOL) }
+      end
+      wakachi
     end
     
     private
     KANJI = Regexp.new('[々〇ヵヶ' + [0x3400].pack('U') + '-' + [0x9FFF].pack('U') +
                        [0xF900].pack('U') + '-' + [0xFAFF].pack('U') +
                        [0x20000].pack('U') + '-' + [0x2FFFF].pack('U') + ']')
+    SYMBOL = Regexp.new('^[^々〇' + [0x3400].pack('U') + '-' + [0x9FFF].pack('U') +
+                        [0xF900].pack('U') + '-' + [0xFAFF].pack('U') +
+                        [0x20000].pack('U') + '-' + [0x2FFFF].pack('U') +
+                        '\s　ぁ-ゞァ-ヾa-zA-Zａ-ｚＡ-Ｚ0-9０-９]+$')
     WHITE_SPACE = /[\s　]/
     
     def self.char_types(chars)
